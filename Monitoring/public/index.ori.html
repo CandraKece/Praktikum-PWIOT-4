@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk DHT11 Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle, #010101 0%, #0a001e 100%);
+            color: #0ff;
+        }
+        .glow {
+            text-shadow: 0 0 5px #0ff, 0 0 10px #0ff, 0 0 15px #00f, 0 0 20px #0ff;
+        }
+        .cyber-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 15px #0ff;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .cyber-text {
+            animation: blink 1.5s infinite alternate;
+        }
+        @keyframes blink {
+            from { opacity: 1; }
+            to { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <div class="cyber-container">
+        <h1 class="text-3xl font-bold glow mb-4">🔥Monitoring DHT11</h1>
+        <p class="text-lg cyber-text">Udara Sejuk Sulawesi Timur</p>
+        <div class="mt-6">
+            <p class="text-2xl">🌡️ Suhu: <span id="temperature" class="font-bold text-cyan-400 text-3xl">--</span>°C</p>
+            <p class="text-2xl">💧 Kelembaban: <span id="humidity" class="font-bold text-pink-400 text-3xl">--</span>%</p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-database.js";
+
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCL08u6lXJBMvLBzoaPlvIJBfmj-uM14V0",
+            authDomain: "monitoring-7db49.firebaseapp.com",
+            databaseURL: "https://monitoring-7db49-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "monitoring-7db49",
+            storageBucket: "monitoring-7db49.firebasestorage.app",
+            messagingSenderId: "684703073005",
+            appId: "1:684703073005:web:90c8c31042e50ac40582e4"
+        };
+
+        // Inisialisasi Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Referensi ke database
+        const temperatureRef = ref(db, "sensor/temperature");
+        const humidityRef = ref(db, "sensor/humidity");
+
+        // Update suhu real-time
+        onValue(temperatureRef, (snapshot) => {
+            const temp = snapshot.val();
+            document.getElementById("temperature").textContent = temp ?? "--";
+        });
+
+        // Update kelembaban real-time
+        onValue(humidityRef, (snapshot) => {
+            const hum = snapshot.val();
+            document.getElementById("humidity").textContent = hum ?? "--";
+        });
+    </script>
+
+</body>
+</html>
